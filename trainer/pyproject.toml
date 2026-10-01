@@ -1,0 +1,59 @@
+[project]
+name = "trainer"
+version = "0.1.0"
+description = "Training queue for robot-arm datasets"
+requires-python = ">=3.12"
+dependencies = [
+    "lerobot[training]==0.6.1",
+]
+
+# Pick the PyTorch build for the training GPU: `uv sync --extra cuda` or `uv sync --extra rocm`.
+[project.optional-dependencies]
+cuda = ["torch", "torchvision"]
+rocm = ["torch", "torchvision", "triton-rocm; sys_platform == 'linux'"]
+
+[project.scripts]
+trainer = "trainer.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+]
+
+[tool.uv]
+conflicts = [[{ extra = "cuda" }, { extra = "rocm" }]]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cuda", extra = "cuda" },
+    { index = "pytorch-rocm", extra = "rocm" },
+]
+torchvision = [
+    { index = "pytorch-cuda", extra = "cuda" },
+    { index = "pytorch-rocm", extra = "rocm" },
+]
+triton-rocm = { index = "pytorch-rocm", extra = "rocm" }
+
+[[tool.uv.index]]
+name = "pytorch-cuda"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm7.2"
+explicit = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

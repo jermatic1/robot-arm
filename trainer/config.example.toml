@@ -1,0 +1,14 @@
+# Copy to config.toml and adjust. Paths may use ~.
+
+# The robot copies datasets here and drops a <task>.ready marker when a copy is complete.
+inbox = "~/robot-trainer/inbox"
+
+# Training runs, status files, and trained policies.
+outputs = "~/robot-trainer/outputs"
+
+policy = "act"
+steps = 100000
+batch_size = 8
+
+# Seconds between inbox checks.
+poll_seconds = 10

@@ -1,0 +1,15 @@
+[Unit]
+Description=Robot training queue
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=CHANGE_ME
+WorkingDirectory=/home/CHANGE_ME/robot-arm/trainer
+ExecStart=/home/CHANGE_ME/.local/bin/uv run --no-dev --extra cuda trainer run
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
