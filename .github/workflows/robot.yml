@@ -1,0 +1,22 @@
+name: robot
+
+on:
+  push:
+    paths: ["robot/**", ".github/workflows/robot.yml"]
+  pull_request:
+    paths: ["robot/**", ".github/workflows/robot.yml"]
+
+defaults:
+  run:
+    working-directory: robot
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest -q
