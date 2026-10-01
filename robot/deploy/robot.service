@@ -1,0 +1,15 @@
+[Unit]
+Description=Robot arm and TV app server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=CHANGE_ME
+WorkingDirectory=/home/CHANGE_ME/robot-arm/robot
+ExecStart=/home/CHANGE_ME/.local/bin/uv run --no-dev robot serve
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

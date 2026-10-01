@@ -1,0 +1,41 @@
+# Copy to config.toml and adjust.
+
+# Datasets, trained policies, and app state live here.
+data = "~/robot-data"
+
+# Arms: find ports with `ls /dev/serial/by-id/`. The ids name the calibration files; use the
+# ids the arms were calibrated with.
+[follower]
+port = "/dev/serial/by-id/CHANGE_ME"
+id = "follower"
+
+[leader]
+port = "/dev/serial/by-id/CHANGE_ME"
+id = "leader"
+
+# Cameras: find paths with `robot find-cameras`. The paths name USB ports, so keep each
+# camera plugged into the same port.
+[cameras.front]
+path = "/dev/v4l/by-path/CHANGE_ME-video-index0"
+
+[cameras.wrist]
+path = "/dev/v4l/by-path/CHANGE_ME-video-index0"
+
+[record]
+target_episodes = 50
+countdown_seconds = 3
+episode_seconds = 20
+reset_seconds = 10
+
+# Foot pedal: find the name with `robot find-pedal`, then press each pedal to see its key.
+[pedal]
+device = ""
+next = "KEY_RIGHT"
+redo = "KEY_LEFT"
+stop = "KEY_ESC"
+
+# Training computer, reached over ssh with a key (no password).
+[trainer]
+host = ""
+inbox = "~/robot-trainer/inbox"
+outputs = "~/robot-trainer/outputs"

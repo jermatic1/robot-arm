@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Robot Arm</title>
+  <link rel="stylesheet" href="css/tv.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Robot Arm</h1>
+    <span id="mode-chip"></span>
+    <span id="storage"></span>
+  </header>
+
+  <div id="error" hidden>
+    <span id="error-text"></span>
+    <button data-action="reconnect">Reconnect</button>
+    <button data-action="dismiss">Dismiss</button>
+  </div>
+
+  <main>
+    <section id="home" class="screen">
+      <div class="tiles">
+        <button class="tile" data-goto="play">Play</button>
+        <button class="tile" data-goto="tasks">Record</button>
+        <button class="tile" data-goto="training">Train and run</button>
+      </div>
+    </section>
+
+    <section id="play" class="screen">
+      <p class="hint">The follower arm follows the leader arm.</p>
+      <div class="cameras"></div>
+      <button data-goto="home">Back</button>
+    </section>
+
+    <section id="tasks" class="screen">
+      <h2>Record</h2>
+      <form id="new-task" class="row">
+        <input id="task-name" maxlength="60" placeholder="New task, e.g. pick up the red block">
+        <button type="submit">Record new task</button>
+      </form>
+      <ul id="task-list" class="list"></ul>
+      <button data-goto="home">Back</button>
+    </section>
+
+    <section id="record" class="screen">
+      <div class="banner" id="record-banner"></div>
+      <div class="cameras"></div>
+      <div class="progress"><div id="record-bar"></div></div>
+      <p id="record-count" class="count"></p>
+      <div class="row controls">
+        <button data-press="next">Next</button>
+        <button data-press="redo">Redo episode</button>
+        <button data-press="stop" class="danger">Stop recording</button>
+      </div>
+    </section>
+
+    <section id="training" class="screen">
+      <h2>Train and run</h2>
+      <p id="trainer-error" class="warn" hidden></p>
+      <ul id="training-list" class="list"></ul>
+      <button data-goto="home">Back</button>
+    </section>
+
+    <section id="run" class="screen">
+      <div class="banner" id="run-banner"></div>
+      <div class="cameras"></div>
+      <div class="row controls">
+        <button data-press="stop" class="danger big">Stop</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

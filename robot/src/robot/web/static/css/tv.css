@@ -1,0 +1,125 @@
+/* Built for a big TV viewed from across the room: large type, high contrast, obvious focus. */
+:root {
+  --bg: #0f1b2d;
+  --panel: #1e3a5f;
+  --text: #ffffff;
+  --accent: #ffb020;
+  --good: #3ddc84;
+  --bad: #ff5a5a;
+  font-size: clamp(18px, 2.2vw, 40px);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1.5rem;
+}
+
+h1 { margin: 0; font-size: 1.6rem; }
+h2 { margin: 0 0 0.8rem; }
+
+#mode-chip {
+  padding: 0.2rem 0.8rem;
+  border-radius: 1rem;
+  background: var(--panel);
+}
+
+#storage { margin-left: auto; opacity: 0.8; }
+#storage.low { color: var(--bad); opacity: 1; font-weight: bold; }
+
+main { padding: 0 1.5rem; }
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+button, input {
+  font: inherit;
+  color: inherit;
+  border: 0.15rem solid transparent;
+  border-radius: 0.6rem;
+  background: var(--panel);
+  padding: 0.5rem 1.1rem;
+}
+
+input { background: #fff; color: #000; flex: 1; }
+
+button:focus, input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.3rem var(--accent);
+  transform: scale(1.05);
+}
+
+button.danger { background: var(--bad); }
+button.big { font-size: 1.6rem; padding: 0.8rem 3rem; }
+
+.tiles {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 12vh;
+}
+
+.tile {
+  width: 16rem;
+  padding: 3rem 1rem;
+  font-size: 1.8rem;
+}
+
+.row { display: flex; gap: 1rem; align-items: center; margin: 0.8rem 0; }
+.controls { justify-content: center; }
+
+.list { list-style: none; padding: 0; margin: 0 0 1rem; max-height: 60vh; overflow-y: auto; }
+.list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+.list .name { flex: 1; font-weight: bold; }
+.list .meta { opacity: 0.8; }
+
+.cameras { display: flex; gap: 1rem; justify-content: center; }
+.cameras img { width: 45%; max-height: 50vh; object-fit: contain; border-radius: 0.6rem; background: #000; }
+
+.banner {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin: 0.3rem 0 0.8rem;
+}
+.banner.recording { color: var(--bad); }
+.banner.countdown { color: var(--accent); }
+
+.progress { height: 1rem; background: var(--panel); border-radius: 0.5rem; margin-top: 1rem; overflow: hidden; }
+#record-bar { height: 100%; width: 0; background: var(--good); transition: width 0.5s; }
+.count { text-align: center; margin: 0.3rem 0; }
+
+.hint { text-align: center; font-size: 1.3rem; }
+.warn { color: var(--bad); }
+
+#error {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 0 1.5rem 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  background: var(--bad);
+}
+#error[hidden] { display: none; }
+#error span { flex: 1; }
