@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Robot Arm</string>
+    <string name="settings_title">Robot address</string>
+    <string name="settings_hint">192.168.1.50:8000</string>
+    <string name="settings_save">Connect</string>
+    <string name="settings_retry">Retry</string>
+    <string name="settings_empty">Enter the robot\'s address.</string>
+    <string name="load_failed">Can\'t reach the robot at this address.</string>
+</resources>
