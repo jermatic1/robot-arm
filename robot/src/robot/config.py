@@ -17,6 +17,8 @@ class Camera:
     width: int = 640
     height: int = 480
     fps: int = 30
+    # Compressed video, so two cameras fit on one USB hub. "" lets OpenCV choose.
+    fourcc: str = "MJPG"
     # v4l2-ctl controls applied at startup, e.g. {"focus_automatic_continuous": 0}
     controls: dict[str, int] = field(default_factory=dict)
 

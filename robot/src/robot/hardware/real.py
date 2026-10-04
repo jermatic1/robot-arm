@@ -30,10 +30,21 @@ from robot.config import Config
 log = logging.getLogger(__name__)
 
 
+def _quietly(label: str, close) -> None:
+    try:
+        close()
+    except Exception:  # noqa: BLE001 - keep closing the rest
+        log.exception("could not close the %s", label)
+
+
 def make_follower(cfg: Config) -> SO101Follower:
     cameras = {
         name: OpenCVCameraConfig(
-            index_or_path=Path(cam.path), width=cam.width, height=cam.height, fps=cam.fps
+            index_or_path=Path(cam.path),
+            width=cam.width,
+            height=cam.height,
+            fps=cam.fps,
+            fourcc=cam.fourcc or None,
         )
         for name, cam in cfg.cameras.items()
     }
@@ -114,16 +125,32 @@ class RealBackend:
         self.processors = make_default_processors()
 
     def connect(self) -> None:
-        for device in (self.leader, self.follower):
-            if not device.is_connected:
-                device.connect(calibrate=False)
-            if not device.is_calibrated:
-                raise RuntimeError(f"{device.id} is not calibrated; run `robot calibrate`")
+        try:
+            for device in (self.leader, self.follower):
+                if not device.is_connected:
+                    device.connect(calibrate=False)
+                if not device.is_calibrated:
+                    raise RuntimeError(f"{device.id} is not calibrated; run `robot calibrate`")
+        except Exception as exc:
+            # The follower opens its cameras one by one after its motors; name the one that failed.
+            if self.follower.bus.is_connected:
+                for name, cam in self.follower.cameras.items():
+                    if not cam.is_connected:
+                        path = self.cfg.cameras[name].path
+                        raise RuntimeError(f"{name} camera ({path}) didn't open: {exc}") from exc
+            raise
 
     def disconnect(self) -> None:
-        for device in (self.follower, self.leader):
-            if device.is_connected:
-                device.disconnect()
+        """Close everything that's open, including after a connect that failed partway."""
+        follower, leader = self.follower, self.leader
+        if follower.bus.is_connected:
+            disable_torque = follower.config.disable_torque_on_disconnect
+            _quietly("follower arm", lambda: follower.bus.disconnect(disable_torque))
+        for name, cam in follower.cameras.items():
+            if cam.is_connected:
+                _quietly(f"{name} camera", cam.disconnect)
+        if leader.is_connected:
+            _quietly("leader arm", leader.disconnect)
 
     def frame(self, camera: str) -> np.ndarray | None:
         cam = self.follower.cameras.get(camera)

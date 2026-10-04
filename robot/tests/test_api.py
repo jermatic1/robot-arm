@@ -56,3 +56,21 @@ def test_unknown_task_is_404(client):
 def test_modes_are_refused_while_disconnected(client, session):
     session.shutdown()
     assert client.post("/api/play").status_code == 409
+
+
+def test_failed_connect_is_reported_and_cleaned_up(cfg):
+    from robot.hardware.fake import FakeBackend
+    from robot.modes.session import Session
+
+    class HalfConnects(FakeBackend):
+        def connect(self):
+            self.connected = True  # first camera opened
+            raise RuntimeError("wrist camera (/dev/video2) didn't open")
+
+    session = Session(HalfConnects(list(cfg.cameras)))
+    session.connect()
+
+    assert not session.connected
+    assert "wrist camera" in session.status()["error"]
+    assert session.frame("front") is None
+    assert not session.backend.connected  # disconnect() ran

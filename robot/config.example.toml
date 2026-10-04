@@ -17,6 +17,7 @@ id = "leader"
 # camera plugged into the same port.
 [cameras.front]
 path = "/dev/v4l/by-path/CHANGE_ME-video-index0"
+# fourcc = "MJPG"   # video format; MJPG (the default) lets two cameras share a USB hub
 
 [cameras.wrist]
 path = "/dev/v4l/by-path/CHANGE_ME-video-index0"

@@ -108,7 +108,7 @@ class Session:
             self.connected = False
 
     def frame(self, camera: str) -> np.ndarray | None:
-        return self.backend.frame(camera)
+        return self.backend.frame(camera) if self.connected else None
 
     def status(self) -> dict:
         mode = self.mode
