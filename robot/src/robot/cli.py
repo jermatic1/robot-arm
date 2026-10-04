@@ -33,8 +33,10 @@ def serve(cfg: config.Config, fake: bool) -> None:
     if not fake:
         pedal.listen(cfg.pedal, session.press)
     app = create_app(cfg, session, Library(cfg), TrainerClient(cfg.trainer))
+    server = uvicorn.Server(uvicorn.Config(app, host=cfg.host, port=cfg.port))
+    app.state.stopping = lambda: server.should_exit
     try:
-        uvicorn.run(app, host=cfg.host, port=cfg.port)
+        server.run()
     finally:
         session.shutdown()
 

@@ -45,6 +45,7 @@ def make_follower(cfg: Config) -> SO101Follower:
             height=cam.height,
             fps=cam.fps,
             fourcc=cam.fourcc or None,
+            warmup_s=cam.warmup_seconds,
         )
         for name, cam in cfg.cameras.items()
     }

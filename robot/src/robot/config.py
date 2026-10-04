@@ -19,6 +19,8 @@ class Camera:
     fps: int = 30
     # Compressed video, so two cameras fit on one USB hub. "" lets OpenCV choose.
     fourcc: str = "MJPG"
+    # How long to wait for the first frames when connecting; some cameras are slow to start.
+    warmup_seconds: int = 3
     # v4l2-ctl controls applied at startup, e.g. {"focus_automatic_continuous": 0}
     controls: dict[str, int] = field(default_factory=dict)
 

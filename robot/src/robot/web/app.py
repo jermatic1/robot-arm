@@ -30,6 +30,8 @@ class Press(BaseModel):
 
 def create_app(cfg: Config, session: Session, library: Library, trainer: TrainerClient) -> FastAPI:
     app = FastAPI(title="robot")
+    # Set by the server runner so camera streams end when the server shuts down.
+    app.state.stopping = lambda: False
     sending: set[str] = set()
     send_errors: dict[str, str] = {}
 
@@ -185,8 +187,12 @@ def create_app(cfg: Config, session: Session, library: Library, trainer: Trainer
     def stream(camera: str, request: Request) -> StreamingResponse:
         if camera not in cfg.cameras:
             raise HTTPException(404, "no such camera")
+
+        async def done() -> bool:
+            return app.state.stopping() or await request.is_disconnected()
+
         return StreamingResponse(
-            mjpeg(lambda: session.frame(camera), request.is_disconnected),
+            mjpeg(lambda: session.frame(camera), done),
             media_type="multipart/x-mixed-replace; boundary=frame",
         )
 
