@@ -23,7 +23,7 @@ android {
                 storeFile = file(keystoreFile)
                 storePassword = System.getenv("TV_KEYSTORE_PASSWORD")
                 keyAlias = System.getenv("TV_KEY_ALIAS")
-                keyPassword = System.getenv("TV_KEY_PASSWORD")
+                keyPassword = System.getenv("TV_KEYSTORE_PASSWORD")
             }
         }
     }

@@ -50,16 +50,18 @@ cd tv
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Releasing
+### Signing and releases
 
-Pushing a tag like `tv-v1.1` builds a signed APK and attaches it to a GitHub release. Every
-release must use the same key, or the TV refuses to install the update over the old version.
-Create the key once and keep a backup:
+Every push to `main` that changes `tv/` builds an APK signed with the repository's key and attaches
+it to the workflow run. Pushing a tag like `tv-v1.1` also publishes it as a GitHub release. Builds
+signed with the same key install over each other, so create the key once and keep a backup:
 
 ```sh
-keytool -genkeypair -keystore robot-tv.jks -alias robot-tv -keyalg RSA -keysize 4096 -validity 10000
+keytool -genkeypair -keystore robot-tv.jks -alias robot-tv -keyalg RSA -keysize 4096 \
+  -validity 10000 -dname "CN=Robot Arm"
 base64 -w0 robot-tv.jks    # value for TV_KEYSTORE_BASE64
 ```
 
-Add these repository secrets: `TV_KEYSTORE_BASE64`, `TV_KEYSTORE_PASSWORD`, `TV_KEY_ALIAS`, and
-`TV_KEY_PASSWORD`.
+Add these repository secrets: `TV_KEYSTORE_BASE64`, `TV_KEYSTORE_PASSWORD`, and `TV_KEY_ALIAS`
+(`robot-tv`). If the key or its password is lost, create a new one, update the secrets, and run
+`adb uninstall robot.tv` before installing the next build.

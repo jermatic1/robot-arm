@@ -1,6 +1,6 @@
 name: tv
 
-# Every change builds the app. Pushing a tag like tv-v1.2 publishes a signed APK as a release.
+# Pushes to main build a signed APK, attached to the run. A tv-v* tag also publishes it as a release.
 on:
   push:
     branches: ["**"]
@@ -14,8 +14,8 @@ defaults:
     working-directory: tv
 
 jobs:
-  build:
-    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+  check:
+    if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -26,11 +26,11 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew assembleDebug
 
-  release:
-    if: startsWith(github.ref, 'refs/tags/tv-v')
+  signed:
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/tv-v')
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write  # for publishing releases
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
@@ -44,16 +44,21 @@ jobs:
           TV_KEYSTORE_BASE64: ${{ secrets.TV_KEYSTORE_BASE64 }}
           TV_KEYSTORE_PASSWORD: ${{ secrets.TV_KEYSTORE_PASSWORD }}
           TV_KEY_ALIAS: ${{ secrets.TV_KEY_ALIAS }}
-          TV_KEY_PASSWORD: ${{ secrets.TV_KEY_PASSWORD }}
           TV_VERSION_CODE: ${{ github.run_number }}
-          TV_VERSION_NAME: ${{ github.ref_name }}
+          TV_VERSION_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('build-{0}', github.run_number) }}
         run: |
           export TV_KEYSTORE_FILE="$RUNNER_TEMP/release.jks"
           echo "$TV_KEYSTORE_BASE64" | base64 -d > "$TV_KEYSTORE_FILE"
           ./gradlew assembleRelease
-          mv app/build/outputs/apk/release/app-release.apk "robot-tv-${GITHUB_REF_NAME#tv-}.apk"
+          mv app/build/outputs/apk/release/app-release.apk robot-tv.apk
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: robot-tv
+          path: tv/robot-tv.apk
 
       - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/tv-v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" robot-tv-*.apk --title "TV app ${GITHUB_REF_NAME#tv-}" --generate-notes
+        run: gh release create "$GITHUB_REF_NAME" robot-tv.apk --title "TV app ${GITHUB_REF_NAME#tv-}" --generate-notes
