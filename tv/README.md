@@ -4,9 +4,8 @@ Google TV app that shows the robot's web UI full screen. Use the remote's arrows
 
 ## Install
 
-1. Download the APK: open the latest successful **tv** run on `main` in the repository's Actions
-   tab and download the `robot-tv` artifact (a zip containing `robot-tv.apk`), or download
-   `robot-tv.apk` from a GitHub Release if one has been tagged.
+1. Download `robot-tv.apk` from the repository's **Latest build** release (Releases → `latest`),
+   which is rebuilt on every push to `main`.
 2. On the TV, turn on developer options: Settings → System → About → press **Android TV OS build**
    7 times. Then, in Settings → System → Developer options, turn on **Wireless debugging** (on
    older TVs: **USB debugging**).

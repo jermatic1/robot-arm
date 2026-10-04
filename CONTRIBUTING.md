@@ -52,9 +52,9 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ### Signing and releases
 
-Every push to `main` that changes `tv/` builds an APK signed with the repository's key and attaches
-it to the workflow run. Pushing a tag like `tv-v1.1` also publishes it as a GitHub release. Builds
-signed with the same key install over each other, so create the key once and keep a backup:
+Every push to `main` builds an APK signed with the repository's key and replaces the `latest`
+release with it. Pushing a tag like `tv-v1.1` publishes a numbered release. Builds signed with the
+same key install over each other, so create the key once and keep a backup:
 
 ```sh
 keytool -genkeypair -keystore robot-tv.jks -alias robot-tv -keyalg RSA -keysize 4096 \
